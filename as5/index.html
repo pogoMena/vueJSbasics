@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>VueJS Basics</title>
+    <script src="https://unpkg.com/vue@3"></script>
+</head>
+
+<body>
+    <div id="app"></div>
+
+    <script>
+        var valueUpdate = false;
+
+        const appTemplate = `
+        <div style="font-family:sans-serif; font-size: 1.1em">
+        <div>
+            <modal-dialog  v-if="isModalDialogDisplayed" @created="modalDialogCreated" @closed="modalDialogClosed" v-bind:currentGrade="currentGrade"/>
+        </div>
+        <div>
+            <button @click="toggleModalDialogClicked">Create new grade</button>
+        </div>
+            <table>
+                <tr>
+                    <td>Course Name</td>
+                    <td>Course Grade</td>
+                    <td>Edit</td>
+                    <td>Delete</td>
+                </tr>
+                <tr v-for="grade in studentGrades" :key="grade.id">
+                    <td>{{grade.courseName}}</td>
+                    <td>{{grade.courseGrade}}</td>
+                    <td @click="edit(grade)">E</td>
+                    <td @click="delete(grade)">D</td>
+                </tr>
+            </table>
+        </div>
+        
+        `;
+        const app = Vue.createApp({
+            data() {
+                return {
+                    isModalDialogDisplayed: false,
+                    studentGrades: [],
+                    id: 0,
+                    currentGrade: {
+                        title: "YOYo Create a grade",
+                        courseName: "ddddd",
+                        courseGrade: 10,
+                    }
+                    
+                }
+            },
+            
+            methods: {
+                toggleModalDialogClicked() {
+                    this.isModalDialogDisplayed = !this.isModalDialogDisplayed;
+                },
+                modalDialogClosed() {
+                    console.log("closing dialog");
+                    this.isModalDialogDisplayed = false;
+                },
+                modalDialogCreated(data) {
+                    data['key'] = this.id++;
+                    this.studentGrades.push(data);
+                    this.isModalDialogDisplayed = false;
+                },
+                edit(key){
+
+                    
+                    //app.component('modal-dialog').methods.setUpdateModal(key);
+                    this.currentGrade = {
+                        title: "Edit grade",
+                        courseName: key['courseName'],
+                        courseGrade: key['courseGrade']};
+
+                    this.isModalDialogDisplayed = !this.isModalDialogDisplayed;
+                },
+                delete(key){
+                    console.log(key);
+                }
+            },
+            template: appTemplate
+        });
+
+        const modalDialogTemplate = `
+            <div style="font-size: 2em; position: absolute; z-index: 10; background-color: rgba(0,0,0,0.3); left:0; right: 0; top: 0; bottom: 0;">
+                <div style="display: flex; justify-content: center; align-content: center ; width: 100% ;">
+                    <div style="max-width:80%;min-width:70%;margin:20px;padding:40px;background-color:aliceblue">
+                        <h5>{{currentGrade.title}}</h5>
+                        <label> Course name: 
+                            <input type="text" v-model="currentGrade.courseName" />
+                        </label>
+                        <label> Grade: 
+                            <input type="number" v-model="currentGrade.courseGrade" min="0" max="100" step="1"  /> /100
+                        </label>
+                        <button @click="closeButtonClicked" style="background-color:pink;border:2px solid black; border-radius:20px;">Cancel</button>
+                    <button @click="createButtonClicked" style="background-color:aliceblue;border:2px solid black; border-radius:20px;">Create</button>
+                    </div> 
+                </div>
+            </div>
+        `;
+
+        /*
+        
+            data() {
+                return ({
+                    title: "Create a grade",
+                    courseName: "",
+                    courseGrade: 0,
+                });
+            },
+            */
+        app.component('modal-dialog', {
+            props: ['currentGrade'],
+            methods: {
+                createButtonClicked() {
+                    console.log(this);
+                    this.$emit('created', {courseName: this.courseName, courseGrade: this.courseGrade });
+                },
+                closeButtonClicked() {
+                    this.$emit('closed');
+                },
+                setUpdateModal(data){
+                    console.log("YOYOYYO");
+                    
+                    this.title=data['courseName'];
+                    console.log(this.title);
+                    return({
+                        title: "fghdfgh",
+                        courseName: "fghdfgh",
+                        courseGrade: 45,
+                    })
+                    //app.$data.title = 
+                    //this.courseName=data.courseName;
+                    //this.courseGrade=data.courseGrade;
+                    
+                    //console.log("title: " + this.title);
+                    //console.log("Grade: " + this.courseGrade);
+                    //console.log("courseName: " + this.courseName);
+
+                }
+            },
+            template: modalDialogTemplate
+        })
+        
+
+        app.mount("#app");
+
+    </script>
+    <style>
+        input, textarea, button {
+            font-size:1.1em;
+        }
+        table{
+            width: 70%;
+            border:1px solid black;
+        }
+    </style>
+</body>
+
+</html>

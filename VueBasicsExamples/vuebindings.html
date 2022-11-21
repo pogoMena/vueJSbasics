@@ -1,0 +1,60 @@
+<html>
+<head>
+  <title>Vue.js Class and Style Bindings</title>
+  <script src="https://unpkg.com/vue@3"></script>
+  <style>
+    .error {background-color: red;}
+    .warning {color: yellow;}
+    .typicalclass { font-size: 48px; }
+  </style>
+</head>
+<body>
+  <div id="app">
+
+    <!-- We can use :class to dynamically toggle classes on or off.  We
+         provide a key/value mapping of class names and boolean data
+         properties.  We can use the regular class attribute as normal,
+         and any of the new classes will be added as well.
+
+         There is an alternative array syntax for class binding as well.
+
+    -->
+    <div :class="{ error: isError, warning: isWarning}"
+         class="typicalclass">
+      Some data
+    </div>
+
+    <!-- We can use :style to dynamically set styles.  The best way to do
+         this is to bind the style to an object which contains the
+         necessary styles.
+
+         We can use multiple objects to set styles as well, using an array
+         syntax.
+
+    -->
+    <div :style="styleObject">
+      Some other data
+    </div>
+
+  </div>
+<script>
+
+  const ClassAndStyle = {
+    data() {
+      return ({
+          isError: true,
+          isWarning: true,
+          styleObject : {
+            color: 'red',
+            fontSize: '48px',
+            backgroundColor: 'green'
+          }
+      });
+    }
+  };
+
+  const app = Vue.createApp(ClassAndStyle).mount("#app");
+
+</script>
+</body>
+</html>

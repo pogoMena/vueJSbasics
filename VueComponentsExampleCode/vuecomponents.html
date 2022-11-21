@@ -1,0 +1,336 @@
+<html>
+<head>
+  <title>Vue.js Components</title>
+  <script src="https://unpkg.com/vue@3"></script>
+</head>
+<body>
+
+  <div id="components-demo">
+    <button-counter></button-counter>
+    <!-- Uncomment to see multiple button-counters, each with their own state!
+    <button-counter></button-counter>
+    <button-counter></button-counter>
+    -->
+  </div>
+
+  <br />
+  <br />
+
+
+  <!-- We can pass props to components -->
+  <div id="props-demo">
+    <blog-post title="My journey with Vue"></blog-post>
+    <blog-post title="Blogging with Vue"></blog-post>
+    <blog-post title="Why Vue is so fun"></blog-post>
+  </div>
+
+  <br />
+  <br />
+
+
+  <!-- We can pass props to components using directives -->
+  <div id="blog-post-demo">
+    <blog-post
+      v-for="post in posts"
+      :key="post.id"
+      :title="post.title">
+    </blog-post>
+  </div>
+
+  <br />
+  <br />
+
+
+  <!-- Components must contain a single root element -->
+  <div id="blogpostbroken">
+    <blog-post-broken></blog-post-broken>
+  </div>
+
+  <br />
+  <br />
+
+
+  <!-- Emitting events example
+
+       Notice v-on:enlarge-text, we can use v-on:eventname
+       to detect and respond to events just like we do click, etc.
+  -->
+  <div id="blog-posts-events-demo">
+    <div :style="{ fontSize: postFontSize + 'em' }">
+      <eblog-post
+        v-for="post in posts"
+        :key="post.id"
+        :post="post"
+        @enlarge-text="postFontSize += 0.1"
+      ></eblog-post>
+    </div>
+  </div>
+
+  <br />
+  <br />
+
+
+  <!-- Emitting events with arguments
+
+       Notice we can specify an event handler method like onEnlargeText
+  -->
+  <div id="blog-posts-events-with-args-demo">
+    <div :style="{ fontSize: postFontSize + 'em' }">
+      <eblog-post-with-args
+        v-for="post in posts"
+        :key="post.id"
+        :post="post"
+        @enlarge-text="onEnlargeText"
+      ></eblog-post-with-args>
+    </div>
+  </div>
+
+  <br />
+  <br />
+
+
+  <!-- v-model will not work "out of the box" in the expected way
+       with components, we need to use props and emit events in
+       user-name in order to make this work:
+  -->
+  <div id="v-model-example">
+    <p>First name: {{ firstName }}</p>
+    <p>Last name: {{ lastName }}</p>
+    <user-name
+     v-model:first-name="firstName"
+     v-model:last-name="lastName"
+   ></user-name>
+ </div>
+
+  <br />
+  <br />
+
+
+  <!-- We can use <slot></slot> to pass along data in the inner
+       html of a component... see the inner html of this
+       alert-box component used...
+  -->
+  <div id="alert">
+    <alert-box>A warning message!</alert-box>
+  </div>
+
+  <br />
+  <br />
+
+
+<script>
+
+  // Components are re-usable view instances with a name
+  //
+  //  - We can use app.component to register them (globally), making them
+  //    available to used in other tempaltes, components, etc.
+  //  - First argument is component name, next argument is
+  //    the object that we normally use to create our root
+  //    Vue instance (with a few exceptions).
+  //  - They are then acessible as <component_name> elements in
+  //    our Vue templates.
+  //
+
+  const app1 = Vue.createApp({});
+
+  app1.component('button-counter', {
+    data() {
+      return ({
+        count: 0
+      });
+    },
+    template: '<button v-on:click="count++">You clicked me {{ count }} times.</button>'
+  })
+
+  app1.mount("#components-demo");
+
+
+  // Props
+  //
+  // If we register 'props' (custoe attributes) on a component,
+  // we can then pass values to components via prop attributes.
+  //
+
+  const app2 = Vue.createApp({});
+
+  app2.component('blog-post', {
+    props: ['title'],
+    template: '<h3>{{ title }}</h3>'
+  })
+
+  app2.mount("#props-demo");
+
+
+  // We can use props with directives to render arrays of data.
+  //
+  const BlogPostDemo =
+  {
+    data() {
+      return ({
+        posts: [
+          { id: 1, title: 'My journey with Vue' },
+          { id: 2, title: 'Blogging with Vue' },
+          { id: 3, title: 'Why Vue is so fun' }
+        ]
+      });
+    }
+  };
+
+  const app3 = Vue.createApp(BlogPostDemo);
+
+  app3.component('blog-post', {
+    props: ['title'],
+    template: '<h3>{{ title }}</h3>'
+  })
+
+  app3.mount("#blog-post-demo");
+
+
+  // This will not work... components must have a single root element.
+  // It's typical to see a root <div></div> element.
+  //
+  /*
+  const app_broken = Vue.createApp({});
+
+  app_broken.component('blog-post-broken', {
+    props: ['title'],
+    template: '<h3>{{ title }}</h3><h3>try another</h3>'
+  })
+
+  app_broken.mount("#blogpostbroken");
+  */
+
+
+  // We can use $emit to emit events from child components to
+  // parent vue instances / components.  We use $emit('eventname')
+  // to do so, and we use v-on:eventname to detect and respond
+  // to the event just like other events (e.g. click).
+  //
+
+  const BlogPostsEventsDemo =
+  {
+    data() {
+      return ({
+        posts: [
+          { id: 1, title: 'My journey with Vue', content: 'Some content A' },
+          { id: 2, title: 'Blogging with Vue', content: 'Some <strong>content</strong> B' },
+          { id: 3, title: 'Why Vue is so fun', content: 'Some content C' }
+        ],
+        postFontSize: 1
+      });
+    }
+  };
+
+  const app4 = Vue.createApp(BlogPostsEventsDemo);
+
+  app4.component('eblog-post', {
+    props: ['post'],
+    template: `
+      <div class="blog-post">
+        <h3>{{ post.title }}</h3>
+        <button @click="$emit('enlarge-text')">
+          Enlarge text
+        </button>
+        <div v-html="post.content"></div>
+      </div>
+    `
+  })
+
+  app4.mount("#blog-posts-events-demo");
+
+
+
+  // We use $emit('eventname', args...) to pass arguments, in this
+  // case 0.1
+  //
+
+  const EventsWithArgs =
+  {
+    data()
+    {
+      return ({
+        posts: [
+          { id: 1, title: 'My journey with Vue', content: 'Some content A' },
+          { id: 2, title: 'Blogging with Vue', content: 'Some content B' },
+          { id: 3, title: 'Why Vue is so fun', content: 'Some content C' }
+        ],
+        postFontSize: 1
+       });
+    },
+    methods: {
+      onEnlargeText(enlargeAmount) {
+        this.postFontSize += enlargeAmount
+      }
+    }
+  };
+
+  const app5 = Vue.createApp(EventsWithArgs);
+
+  app5.component('eblog-post-with-args', {
+    props: ['post'],
+    template: `
+      <div class="blog-post">
+        <h3>{{ post.title }}</h3>
+        <button @click="$emit('enlarge-text', 0.5)">
+          Enlarge text
+        </button>
+        <div v-html="post.content"></div>
+      </div>
+    `
+  });
+
+  app5.mount("#blog-posts-events-with-args-demo");
+
+
+  // In order to use v-model to bind data to our inputs,
+  // we need to do some custom edits in the case of components such
+  // that they emit an update event and use a prop as below.
+  //
+  const CustomInput =
+  {
+    data() { return { firstName : "John", lastName: "Smith" } }
+  };
+
+  const app6 = Vue.createApp(CustomInput);
+
+  app6.component('user-name', {
+    props: {
+      firstName: String,
+      lastName: String
+    },
+    emits: ['update:firstName', 'update:lastName'],
+    template: `
+      <input
+        type="text"
+        :value="firstName"
+        @input="$emit('update:firstName', $event.target.value)">
+
+      <input
+        type="text"
+        :value="lastName"
+        @input="$emit('update:lastName', $event.target.value)">
+    `
+  });
+
+  app6.mount("#v-model-example");
+
+
+  // Whever we put <slot></slot> is where the inner html of the
+  // alert-box component will render...
+  //
+  const app7 = Vue.createApp({});
+
+  app7.component('alert-box', {
+    template: `
+      <div class="demo-alert-box">
+        <strong>Error!</strong>
+        <slot></slot>
+      </div>
+    `
+  });
+
+  app7.mount("#alert");
+
+</script>
+</body>
+</html>

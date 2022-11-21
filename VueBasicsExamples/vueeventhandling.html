@@ -1,0 +1,57 @@
+<html>
+<head>
+  <title>Vue.js Event Handling</title>
+  <script src="https://unpkg.com/vue@3"></script>
+</head>
+<body>
+  <div id="app">
+
+    <div id="example-2">
+      <!-- `greet` is the name of a method defined below -->
+      <button @click="greet">Greet</button>
+    </div>
+
+    <br /> <br />
+
+    <!--
+         We can use the .prevent modifier to our @submit in order to
+         prevent the usual behaviour of a form submit (to submit the form!).
+
+    -->
+    <form
+     method="post" action="https://csunix.mohawkcollege.ca/tooltime/echo.php"
+     @submit.prevent="onsubmit">
+      <input type="text" name="username">
+      <input type="submit">
+    </form>
+
+  </div>
+<script>
+
+  const Events = {
+    data()
+    {
+      return ({ name: 'Vue.js'});
+    },
+    // define methods under the `methods` object
+    methods: {
+      greet(event) {
+        // `this` inside methods points to the Vue instance
+        alert('Hello ' + this.name + '!')
+        // `event` is the native DOM event
+        if (event) {
+          alert(event.target.tagName)
+        }
+      },
+      onsubmit(event)
+      {
+        alert("submitted");
+      }
+    }
+  };
+
+  const app = Vue.createApp(Events).mount("#app");
+
+</script>
+</body>
+</html>

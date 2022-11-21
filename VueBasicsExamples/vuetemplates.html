@@ -1,0 +1,77 @@
+<html>
+<head>
+  <title>Vue.js Template Syntax</title>
+  <script src="https://unpkg.com/vue@3"></script>
+</head>
+<body>
+  <div id="app">
+
+    <!-- the v-once directive will make it such that interpolations
+         occur only once, they will not change if the data changes! -->
+    <span v-once>Data will never change: {{ message }}</span>
+
+    <!-- Normal interpolation of an HTML string with {{ }} will
+         result in plain-text HTML output, using the v-html
+         directive will allow you to output HTML.  -->
+    <p>Interpolation with moustaches: {{ rawHtml }}</p>
+    <p>Using v-html directive: <span v-html="rawHtml"></span></p>
+
+    <!-- Can't use moustaches to set HTML attributes, need to use
+         the v-bind directive.  We can then alter dynamicLink (or
+         whatever else) and the link href will change. -->
+    <a v-bind:href="dynamicLink" target="_blank">My Link</a>
+
+    <br /> <br />
+
+    <!-- For boolean attributes, such as disabled, we use the below
+         format v-bind:attribute="somedataval", and if the value is
+         null/undefined/false/disabled the attribute won't be
+         included, otherwise it will be. -->
+    <button v-bind:disabled="isButtonDisabled">Click Me</button>
+
+    <br /> <br />
+
+    <!-- Note that we can have JavaScript expressions in our
+         data bindings... but not JavaScript statements (assignments,
+         Ifs, loops, etc.) -->
+    <span>{{ message.split('').reverse().join('') }}</span>
+
+
+    <!-- v-if directive will display or not display something based
+         on the truthness of its argument -->
+    <p v-if="showit">Can you see me?</p>
+
+    <!-- We can use : as a shorthand for v-bind, and as we will see
+         later, for v-on (used for events) -->
+    <a :href="dynamicLink" target="_blank">Another Link</a>
+
+  </div>
+<script>
+
+  // Template Syntax
+  //
+  // - Remember that "under the hood" Vue is taking the template and
+  // compiling it into a Virtual DOM that it then manages!
+  //
+  // - It is actually possible to write "render functions" that manipulate
+  // the Virtual DOM more directly.
+  //
+  //
+
+  const Templates = {
+    data() {
+      return ({
+        message: 'Hello Vue!',
+        rawHtml: "<span style='color: red'>This should be red.</span>",
+        dynamicLink: "https://www.twitter.com",
+        isButtonDisabled: true,
+        showit: true
+      });
+    }
+  };
+
+  const app = Vue.createApp(Templates).mount("#app");
+
+</script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<html>
+<head>
+  <title>Vue.js Instance Properties</title>
+  <script src="https://unpkg.com/vue@3"></script>
+</head>
+<body>
+  <div id="app">
+    {{ message }} {{ newmessage }}
+  </div>
+<script>
+
+  const RootComponent = {
+
+    data() {
+      return ({
+        message: 'Hello Vue!',
+       // uncomment newmessage below to remove the error regarding
+       // using a property that is not defined
+       // newmessage: ''
+      });
+    },
+
+    // Created will run when the vue instance is created... we could
+    // for example pull data via AJAX from a back-end at this point
+    // to populate our Vue instance
+    //
+    // - Other lifecycle methods include , updated and destroyed.
+    // - We can use "this" to refer to the Vue instance in our lifecycle methods
+    //
+    created() {
+      // `this` points to the vm instance
+      console.log('data is: ' + this.message)
+    }
+  };
+
+
+  const app = Vue.createApp(RootComponent).mount("#app");
+
+  // We can modify the property later if it already exists in the Vue instance...
+  app.$data.message = 'Some new text';
+
+  // But if the property doesn't exist, it will trigger an error, even it appears to work...
+  app.$data.newmessage = 'Attempt to create more data keys...';
+
+  // Solution: always put the property in the Vue instance data, even
+  // if it is initially set to some empty value
+
+</script>
+</body>
+</html>

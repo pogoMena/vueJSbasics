@@ -1,0 +1,25 @@
+<html>
+<head>
+  <title>Vue.js Conditional Rendering</title>
+  <script src="https://unpkg.com/vue@3"></script>
+</head>
+<body>
+  <div id="app">
+    <div v-if="something === 'A'">A</div>
+    <div v-else-if="something === 'B'">B</div>
+    <div v-else-if="something === 'C'">C</div>
+    <div v-else>Not A/B/C</div>
+  </div>
+<script>
+
+  const Conditional = {
+    data() {
+      return ({ something: 'Z' });
+    }
+  };
+
+  const app = Vue.createApp(Conditional).mount("#app");
+
+</script>
+</body>
+</html>

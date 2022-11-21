@@ -1,0 +1,79 @@
+<html>
+<head>
+  <title>Vue.js List Rendering</title>
+  <script src="https://unpkg.com/vue@3"></script>
+</head>
+<body>
+  <div id="app">
+
+    <!--
+         We can render a list using v-for and "X of XArray" or "X in XArray"
+         style directive.
+
+         We can use a similar style syntax to go through the properties of
+         an object.
+    -->
+    <ul id="example-2">
+      <li v-for="(item, index) of items">
+        {{ parentMessage }} - {{ index }} - {{ item.message }}
+      </li>
+    </ul>
+
+    <!--
+         Vue.js can handle updating the list if data has changed, but
+         if your list render output does rely on child component state
+		     or temporary DOM state (e.g. form input values), then you need to
+         provide a unique key attribute to help Vue.js keep track of
+         "what item is what".  Use the :key binding to provide this
+         unique key.  Except for a few situations (e.g. performance
+         optimization), you should provide a key as a matter of best
+         practice.
+
+    -->
+    <ol id="example-3">
+      <li v-for="item in itemslist" :key="item.id">
+         {{ item.message }}
+      </li>
+    </ol>
+
+  </div>
+<script>
+
+  const Lists = {
+    data()
+    {
+      return ({
+        parentMessage: 'Parent',
+        items: [
+          { message: 'Foo' },
+          { message: 'Bar' }
+        ],
+        itemslist: [
+          { message: 'Foo', id: '1' },
+          { message: 'Bar', id: '2' }
+        ]
+      });
+    }
+  };
+
+  const app = Vue.createApp(Lists).mount("#app");
+
+  app.$data.itemslist.push({message: 'New', id: '3'});
+
+  /*
+
+    Use the following functions to manipulate arrays of data in order
+    to trigger Vue updates:
+
+    push()
+    pop()
+    shift()
+    unshift()
+    splice()
+    sort()
+    reverse()
+  */
+
+</script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<html>
+<head>
+  <title>Vue.js Computed Properties</title>
+  <script src="https://unpkg.com/vue@3"></script>
+</head>
+<body>
+  <div id="app">
+    <p>Message: {{ message }}</p>
+    <p>Reversed Message: {{ reverseMessage }}</p>
+  </div>
+<script>
+
+  // We can define functions in a 'computed' key with object value, and
+  // we can then use the functions of this object to access these
+  // values as if they were data values.  The idea is to compute
+  // new data from our data that we will display... rather than
+  // cluttering our interpolations with too much logic.
+  //
+  // - Vue is aware of the dependency between the property and the
+  // computed property and will update it accordingly.
+  //
+  // - Computed properties are *cached* which means they only get
+  // calculated as needed (as the dependent data changes).  This is
+  // why we don't just want to call a regular JavaScript method in
+  // our interpolations, for example.
+  //
+  //
+
+
+  const ComputedProperties = {
+    data() {
+      return ({
+        message: 'Hello Vue!',
+      });
+    },
+    computed: {
+      reverseMessage()
+      {
+        return this.message.split('').reverse().join('');
+      }
+    }
+  };
+
+  const app = Vue.createApp(ComputedProperties).mount("#app");
+
+</script>
+</body>
+</html>
